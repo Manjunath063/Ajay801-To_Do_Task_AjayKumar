@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  backend:
+    container_name: ajay801-backend
+    build: ./Backend
+    ports:
+      - "3040:3040"
+    depends_on:
+      - postgres
+    environment:
+      - PORT=3040
+      - HOST=0.0.0.0
+      - DB_USER=postgres
+      - DB_PASSWORD=admin123
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_NAME=new_employee_db
+
+  frontend:
+    container_name: ajay801-frontend
+    build: ./Frontend
+    ports:
+      - "8074:80"
+    depends_on:
+      - backend
+
+  hr_page:
+    container_name: ajay801-hr-page
+    build: ./HR_Page
+    ports:
+      - "8075:80"
+    depends_on:
+      - backend
+
+  postgres:
+    container_name: ajay801-postgres
+    image: postgres:13
+    ports:
+      - "5436:5432"
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: admin123
+      POSTGRES_DB: new_employee_db
+    volumes:
+      - pgdata801:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+volumes:
+  pgdata801:
+
